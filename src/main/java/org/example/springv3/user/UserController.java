@@ -8,10 +8,7 @@ import org.example.springv3.core.util.Resp;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.Errors;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 @RequiredArgsConstructor
@@ -50,10 +47,12 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public String login(@Valid UserRequest.LoginDTO loginDTO, Errors errors) {
-        User sessionUser = userService.로그인(loginDTO);
-        session.setAttribute("sessionUser", sessionUser);
-        return "redirect:/";
+    public ResponseEntity<?> login(@Valid @RequestBody UserRequest.LoginDTO loginDTO, Errors errors) {
+        String accessToken = userService.로그인(loginDTO);
+
+        return ResponseEntity.ok()
+                .header("Authorization", "Bearer " + accessToken)
+                .body(Resp.ok(null));
     }
 
     @PostMapping("/join")
